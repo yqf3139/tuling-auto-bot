@@ -2,15 +2,39 @@
 
 console.log('content_scripts runs');
 
+var botImage
+
 var Bot = {
-  onSnit:function () {
+  image: null,
+  onInit: function () {
     // body...
+    var self = this
+    this.image = $('<img />', {
+      src: 'https://octodex.github.com/images/daftpunktocat-thomas.gif'
+    });
+    this.setEvent();
+    
+    $(function() {
+      var d = document;
+      var body = $(document.body);
+
+      self.image
+      .addClass('bot')
+      // .appendTo(body)
+
+    });
+
+  },
+  setEvent: function() {
+    // ...
   },
   onShow:function () {
     // body...
+    this.image.fadeIn()
   },
   onHide:function () {
     // body...
+    this.image.fadeOut()
   },
   onPopSingleMsg:function () {
     // body...
@@ -26,19 +50,26 @@ var Bot = {
   },
 }
 
-var d = document
-var body = $(document.body)
+var popupMenu = {
+  menu: [],
+  init: function() {
+    this.menu = [
+      'todo',
+      'douban',
+      'zhihu',
+    ]
+    this.menu.forEach(function(li) {
+      
+    })
+  },
+}
 
-var botImage = $('<img />', {
-  src: 'https://octodex.github.com/images/daftpunktocat-thomas.gif'
-})
-.addClass('bot')
-.appendTo(body)
-// .attr('src', )
-console.log('append', botImage)
-// body.append(botImage)
-
-
+Bot.onInit()
+  
+$.get(chrome.extension.getURL('/views/bot.html'), function(data) {
+  console.log(data);
+  $(data).appendTo('body');
+});
 // schedules
 // every minite invoke
 

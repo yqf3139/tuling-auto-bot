@@ -22,9 +22,13 @@
     },
     "content_scripts": [
       {
-      "matches": ["*://*/*"],
-      "js": ["jquery.min.js","bot.js","content.js"],
-      "css": ["bot.css"]
+        "matches": ["*://*/*"],
+        "js": ["jquery.min.js","bot.js","content.js"],
+        "css": ["bot.css"]
+      },
+      {
+        "matches": ["http://zhihu.com/"],
+        "js": ["hooks/zhihu.js"]
       }
     ],
     "web_accessible_resources": [

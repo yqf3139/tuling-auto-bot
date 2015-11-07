@@ -1,0 +1,11 @@
+<div id="tbot" class="bot">
+</div>
+<script type="text/javascript">
+console.log('bot.html')
+var tbot = $('#tbot')
+$('<img />', {
+  id: "tbotImage",
+  src: chrome.extension.getURL('/imgs/octocat.gif'),
+}).appendTo(tbot)
+tbot.appendTo('body')
+</script>
