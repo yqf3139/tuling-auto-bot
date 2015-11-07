@@ -26,6 +26,19 @@ var Bot = {
   },
 }
 
+var d = document
+var body = $(document.body)
+
+var botImage = $('<img />', {
+  src: 'https://octodex.github.com/images/daftpunktocat-thomas.gif'
+})
+.addClass('bot')
+.appendTo(body)
+// .attr('src', )
+console.log('append', botImage)
+// body.append(botImage)
+
+
 // schedules
 // every minite invoke
 

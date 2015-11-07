@@ -23,7 +23,8 @@
     "content_scripts": [
       {
       "matches": ["*://*/*"],
-      "js": ["bot.js","content.js"]
+      "js": ["jquery.min.js","bot.js","content.js"],
+      "css": ["bot.css"]
       }
     ],
     "web_accessible_resources": [
