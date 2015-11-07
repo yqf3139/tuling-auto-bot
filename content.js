@@ -18,11 +18,12 @@ document.onkeydown = function(e) {
 	var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
 	var activeElement = document.activeElement;//当前处于焦点的元素的id
 	if (code == 13 && activeElement == Bot.textarea) {
-    console.log(code);
+    // console.log(code);
     var content = Bot.textarea.value;
     Bot.onAddPeopleDialog(content);
     BotApi(content ,function (msg) {
       Bot.onAddBotDialog(msg);
+      Dialog.setContent(msg);
     });
     Bot.textarea.value = "";
 		return false;
@@ -30,14 +31,12 @@ document.onkeydown = function(e) {
 	return true;
 }
 
-var trash;
-var Bot = {
-  historyTpl:null,
-  botTpl:null,
-  peopleTpl:null,
-  boxTpl:null,
-  diaList:null,
-  onInit:function () {
+
+var msgDialog = $('#react');
+var loader = $('.loader');
+
+var Dialog = {
+  init: function() {
     // create some html elements and then hide
     var dialogBoxUrl = chrome.extension.getURL('views/dialogbox.html');
     ChromeApi(dialogBoxUrl, function (raw) {
@@ -52,6 +51,7 @@ var Bot = {
         Bot.onAddPeopleDialog(content);
         BotApi(content ,function (msg) {
           Bot.onAddBotDialog(msg);
+          Dialog.setContent(msg)
         });
         Bot.textarea.value = "";
       });
@@ -77,6 +77,23 @@ var Bot = {
     for (var i = 0; i < BotHooks.length; i++) {
       BotHooks[i]();
     }
+  },
+  setContent: function(message) {
+    console.log('setContent', message)
+    document.getElementById('react').textContent = message;
+    loader.hide();
+  },
+}
+
+var trash;
+var Bot = {
+  historyTpl:null,
+  botTpl:null,
+  peopleTpl:null,
+  boxTpl:null,
+  diaList:null,
+  onInit:function () {
+    // Dialog.init();
     // Robot Cat
     $.get(chrome.extension.getURL('/views/bot.html'), function(data) {
       $(data).appendTo('body');
@@ -185,6 +202,7 @@ var scheduler = {
   run:function (s) {
     if(document.hidden)return;
     BotApi(s.query,function (msg) {
+      Dialog.setContent(msg)
       console.log(s.name, msg);
       s.callback(msg);
     });
@@ -194,15 +212,17 @@ var scheduler = {
 $(document).ready(function() {
   scheduler.start();
   Bot.onInit();
-  Bot.onChatWindowShow();
-  console.log('onInit');
+  // Bot.onChatWindowShow();
+  // console.log('onInit');
   setTimeout(function () {
-    Bot.onChatWindowShow();
+    // Bot.onChatWindowShow();
     var kw = extractKeywords();
-    Bot.onAddPeopleDialog(kw);
+    // Bot.onAddPeopleDialog(kw);
 
     BotApi(kw ,function (msg) {
-      Bot.onAddBotDialog(msg);
+      Dialog.setContent(msg)
+      // Bot.onAddBotDialog(msg);
+      console.log(msg)
     });
-  },2000);
+  }, 2000);
 });

@@ -1,3 +1,7 @@
+<div id="botReact" class="triangle-border">
+  <p id="react"></p>
+  <!-- <div class="loader">...</div> -->
+</div>
 <div id="tbot" class="bot"></div>
 <script type="text/javascript">
 var tbot = $('#tbot')
@@ -8,4 +12,8 @@ $('<img />', {
 .addClass('botImg')
 .appendTo(tbot)
 tbot.appendTo('body')
+
+$('#botReact').hide().fadeIn(300)
+
+
 </script>
