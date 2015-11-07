@@ -8,33 +8,15 @@ var Bot = {
   image: null,
   onInit: function () {
     // body...
-    var self = this
-    this.image = $('<img />', {
-      src: 'https://octodex.github.com/images/daftpunktocat-thomas.gif'
-    });
-    this.setEvent();
-    
-    $(function() {
-      var d = document;
-      var body = $(document.body);
-
-      self.image
-      .addClass('bot')
-      // .appendTo(body)
-
-    });
-
   },
   setEvent: function() {
     // ...
   },
   onShow:function () {
     // body...
-    this.image.fadeIn()
   },
   onHide:function () {
     // body...
-    this.image.fadeOut()
   },
   onPopSingleMsg:function () {
     // body...
@@ -50,24 +32,8 @@ var Bot = {
   },
 }
 
-var popupMenu = {
-  menu: [],
-  init: function() {
-    this.menu = [
-      'todo',
-      'douban',
-      'zhihu',
-    ]
-    this.menu.forEach(function(li) {
-      
-    })
-  },
-}
-
-Bot.onInit()
   
 $.get(chrome.extension.getURL('/views/bot.html'), function(data) {
-  console.log(data);
   $(data).appendTo('body');
 });
 // schedules
