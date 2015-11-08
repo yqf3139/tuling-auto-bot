@@ -293,16 +293,23 @@ var Dialog = {
     if (Dialog.msglist.length == 0) return;
 
     var topMessage = Dialog.msglist.shift();
-    Dialog.createDialog(topMessage.message, topMessage.type);
-    // console.log('node', topMessage)
+    var msg, type
+    if (typeof topMessage === 'string') {
+      msg = topMessage
+      type = 'text'
+    }
+    else {
+      msg = topMessage.message
+      type = topMessage.type
+    }
+    Dialog.createDialog(msg, type);
     setTimeout(function() {
-      var top = $('.bot-react').first()
-      // console.log($(top).text())
+      var top = $('.bot-react').first().remove()
       $(top).fadeOut(500, function() {
-        $(this).remove()
+        $(top).remove()
       })
-
     }, 2000)
+
 
   },
 }
@@ -413,13 +420,13 @@ function Schedule(name, interval, query, callback) {
 
 var scheduler = {
   schedules: [
-    new Schedule("lauch",1,"午餐菜谱",function (msg) {
+    new Schedule("lauch",5,"午餐菜谱",function (msg) {
 
     }),
     new Schedule("weather",3,"上海天气",function (msg) {
 
     }),
-    new Schedule("news",5,"看新闻",function (msg) {
+    new Schedule("news",7,"看新闻",function (msg) {
 
     }),
   ],
@@ -476,4 +483,11 @@ $(document).ready(function() {
     Dialog.popMessage();
 
   }, 200)
+
+  var pops = $('.bot-react')
+  pops.click(function() {
+    pops.fadeOut(1500, function() {
+      pops.remove()
+    })
+  })
 });
