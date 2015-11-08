@@ -1,20 +1,20 @@
 ﻿var drawline = function(width, height, items,path) {
 
     var margin = {top: 40, right: 20, bottom: 30, left: 40},
-    width = 600 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    width = 200 - margin.left - margin.right,
+    height = 200 - margin.top - margin.bottom;
 
     items = [
     {
-        "name":"知乎",
+        "name":"新产品",
         "frequency":0.5
     },
     {
-        "name":"豆瓣",
+        "name":"货币基金",
         "frequency":0.3
     },
         {
-        "name":"百度",
+        "name":"开放式基金",
         "frequency":0.2
     }
     ]
@@ -38,13 +38,12 @@
 
     var color = d3.scale.category10();
 
-
     var svg = d3.select(path).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+    console.log(svg);
 
 
     x.domain(items.map(function(d) { return d.name; }));
@@ -73,7 +72,7 @@
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function(d) { return x(d.name); })
-        .attr("width", x.rangeBand())
+        .attr("width", x.rangeBand()/3)
         .attr("y", function(d) { return y(d.frequency); })
         .attr("height", function(d) { return height - y(d.frequency); })
         .attr("fill",function(d,i){

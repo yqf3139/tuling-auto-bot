@@ -224,17 +224,17 @@ var Dialog = {
     log.classList.add('triangle-border');
 
     // .addClass('bot-react triangle-border');
-    var msgContent = d.createElement('p');//.text(message)
+    var msgContent = d.createElement('div');//.text(message)
     var id = (new Date()).getTime();
     msgContent.id = id;
-    msgContent.innerHTML = "sdf";
+    // msgContent.innerHTML = "sdf";
     log.appendChild(msgContent);
     //msgContent.innerHTML = message;
     // msgContent.style.visibility = 'hidden';
     // log.appendChild(msgContent);
     dialog.appendChild(log);
 
-    // drawline(10,10,null,"p#id");
+    drawline(10,10,null,msgContent);
   },
   popMessage: function() {
     var dialog = d.getElementById('response');
