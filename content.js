@@ -83,7 +83,7 @@ var d = document;
 // var loader = $('.loader');
 
 var Dialog = {
-  msglist: [],
+  msglist: ['Hi, 我是小T'],
   init: function() {
     // create some html elements and then hide
     var dialogBoxUrl = chrome.extension.getURL('views/dialogbox.html');
@@ -126,48 +126,82 @@ var Dialog = {
       BotHooks[i]();
     }
   },
-  setContent: function(message) {
-    Dialog.msglist.push(message);
-    console.log('setContent', message);
-    // document.getElementById('react').textContent = message;
+  setContent: function(message, type) {
+    if (!type)
+      type = 'text'
+    Dialog.msglist.push({
+      message: message,
+      type: type,
+    });
+    // console.log('setContent', message);
     
-    // loader.hide();
-
-    // setTimeout(function() {
-    //   $(log).fadeOut();
-    // }, 1000)
   },
-  createDialog: function(message) {
+  createDialog: function(message, type) {
+    console.log('message', message)
     var log = d.createElement('div');
     var dialog = d.getElementById('response');
     log.classList.add('bot-react');
     log.classList.add('triangle-border');
 
-    // .addClass('bot-react triangle-border');
-    var msgContent = d.createElement('p');//.text(message)
-    msgContent.appendChild(log);
-    msgContent.innerHTML = message;
-    // msgContent.style.visibility = 'hidden';
-    log.appendChild(msgContent);
+    if (type == 'text') {
+      var msgContent = d.createElement('p');
+      var text
+      if (typeof message === 'string')
+        text = message
+      else 
+        text = message.text
+      msgContent.appendChild(log);
+      msgContent.innerHTML = text;
+    }
+    else if (type == 'news') {
+      var article, source, detailurl
+      article = message.article
+      source = message.source
+      detailurl = message.detailurl
+      var text = $('<p />').text(article + '\n' + '来自: ' + source)
+
+      var msgContent = $('<a> /' ,{
+        href: detailurl 
+      })
+      .append(text)
+    }
+    // else if (type == 'weather') {
+
+    // }
+    else if (type == 'cook') {
+      var info, name, icon
+      info = message.info
+      name = message.name
+      icon = message.icon
+      var msgContent = $('<div />')
+      var img = $('<img />', {
+        src: icon
+      }).appendTo(msgContent)
+      var infoNode = $('<p />').text(info).appendTo(msgContent)
+      var nameNode = $('<p />').text('来自: ' + name).appendTo(msgContent)
+
+    }
+    $(log).append($(msgContent));
+    
     dialog.appendChild(log);
   },
   popMessage: function() {
     var dialog = d.getElementById('response');
     console.log('msglist.length', Dialog.msglist.length);
-    if (Dialog.msglist.length !== 0) {
-      var topMessage = Dialog.msglist.shift();
-      Dialog.createDialog(topMessage);
-      console.log('node', topMessage)
-      setTimeout(function() {
-        var top = $('.bot-react').first()
-        // console.log($(top).text())
-        $(top).fadeOut(500, function() {
-          $(this).remove()
-        })
+    if (Dialog.msglist.length == 0) return;
 
-        // dialog.removeChild(dialog.childNodes[0]);
-      }, 2000)
-    }
+    var topMessage = Dialog.msglist.shift();
+    Dialog.createDialog(topMessage.message, topMessage.type);
+    // console.log('node', topMessage)
+    setTimeout(function() {
+      var top = $('.bot-react').first()
+      // console.log($(top).text())
+      $(top).fadeOut(500, function() {
+        $(this).remove()
+      })
+
+    }, 2000)
+  
   },
 }
 
@@ -198,6 +232,7 @@ var Bot = {
     Bot.boxTpl.style.visibility = 'hidden';
   },
   onAddPeopleDialog:function (msg) {
+    return;
     var peopleDialog = Bot.peopleTpl.cloneNode(true);
     // debugger;
     var ctn = peopleDialog.querySelector('.bd-bear-dialog-item');
@@ -207,6 +242,7 @@ var Bot = {
     peopleDialog.scrollTop = peopleDialog.scrollHeight;
   },
   onAddBotDialog:function (msg) {
+    return;
     var botDialog = Bot.botTpl.cloneNode(true);
     // debugger;
     var ctn = botDialog.querySelector('.bd-bear-dialog-content');
@@ -264,7 +300,7 @@ var scheduler = {
     new Schedule("lauch", 5,"午餐菜谱",function (msg) {
 
     }),
-    new Schedule("weather",1,"今日上海天气",function (msg) {
+    new Schedule("weather",1,"上海天气",function (msg) {
 
     }),
     new Schedule("news", 8,"我要看新闻",function (msg) {
@@ -280,14 +316,15 @@ var scheduler = {
       var item = scheduler.schedules[i]
       item.counter++;
       if (item.counter % 10 == item.interval) {
-        item.counter = 0;
-        scheduler.que.push(item);
+        // item.counter = 0;
+        // console.log(scheduler.que)
+        // scheduler.que.push(item);
       }
     }
     if(scheduler.schedules.length == 0) return;
     var s = scheduler.schedules.shift();
     scheduler.run(s);
-    scheduler.schedules.push(s);
+    // scheduler.schedules.push(s);
   },
   run:function (s) {
     if(document.hidden)return;
