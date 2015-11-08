@@ -8,11 +8,11 @@
   height: 80px;  
 }
 
-.bot img {
+img {
   z-index: 999;
   display: block;
   max-width: 100%;
-  height: 100%;
+  /*height: 100%;*/
 }
 
 .listbar {

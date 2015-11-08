@@ -28,10 +28,11 @@ var BotApi = function (query, callback){
       // console.log(this.responseText);
       var Obj = JSON.parse(this.responseText);
       if(Obj == null)return;
-      if (Obj.code != 100000) {
-        console.log(Obj);
-      }
+      // if (Obj.code != 100000) {
+      // }
+      console.log(Obj);
       Dialog.setContent(Obj.text);
+      Rule.filter(Obj);
       callback(Obj.text);
   };
   xhr.send();
@@ -61,4 +62,33 @@ var BotServerApi = {
     .done(done)
     .fail(fail)
   },
+}
+
+var Rule = {
+  filter: function(message) {
+    if (message.text.indexOf('新闻') >= 0) {
+      Rule.newsFilter(message.list);
+    }
+    else if (message.text.indexOf('菜谱') >= 0) {
+      Rule.cookFilter(message.list)
+    }
+  },
+
+  newsFilter: function(newsList) {
+    if (newsList && newsList.length) {
+      var len = Math.min(newsList.length, 4)
+      for (var i = 0; i < len; i++) {
+        Dialog.setContent(newsList[i], 'news')
+      }
+    }
+  },
+  cookFilter: function(cookList) {
+    if (cookList && cookList.length) {
+      var len = Math.min(cookList.length, 3)
+      for (var i = 0; i < len; i++) {
+        Dialog.setContent(cookList[i], 'cook')
+      }
+    }
+  },
+
 }
