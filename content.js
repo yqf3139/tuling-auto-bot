@@ -6,11 +6,57 @@ console.log('content_scripts runs');
 var BotHooks = [];
 var parser = new DOMParser();
 
+document.onmousedown = recordObj;
+document.onmouseup = showSelect;
+var startObj;
+
+function recordObj(event){
+  startObj=event.srcElement;
+}
+
+function showSelect(event) {
+  var str="";
+  if(event.srcElement.tagName!="A"&&event.srcElement.tagName!="INPUT"&&event.srcElement==startObj)
+  {
+    str = window.getSelection().getRangeAt(0).cloneContents().textContent;
+    if (str.length > 1) {
+      Bot.onAddPeopleDialog(str);
+      BotApi(str ,function (msg) {
+        Bot.onAddBotDialog(msg);
+      });
+    }
+  }
+  console.log(str);
+}
+
 BotHooks.push(
   function () {
-
+    var urls = document.querySelectorAll('a');
+    for (var i = 0; i < urls.length; i++) {
+      if (urls[i].textContent.length < 10) {
+        continue;
+      }
+      var hasChinese = false;
+      for (var j = 0; j < urls[i].textContent.length; j++) {
+        if (urls[i].textContent.charCodeAt(j) > 255) {
+          hasChinese = true;
+          break;
+        }
+      }
+      console.log(urls[i].textContent, hasChinese);
+      if(!hasChinese)continue;
+      urls[i].addEventListener("mouseover", BotOnMouseOver);
+    }
   }
 );
+
+var BotOnMouseOver = function (e) {
+  Bot.onAddPeopleDialog(e.srcElement.textContent);
+  BotApi(e.srcElement.textContent ,function (msg) {
+    Bot.onAddBotDialog(msg);
+  });
+  console.log(e.srcElement.textContent);
+}
 
 document.onkeydown = function(e) {
 	// 兼容FF和IE和Opera
@@ -171,7 +217,6 @@ var Bot = {
   },
   onWindowSendMsg:function (query){
     // use onApiCallback to callback
-
   },
   onUserDragText:function (raw) {
     // body...
@@ -197,6 +242,9 @@ function extractKeywords() {
     }
   }
   console.log('keyword ', titles[maxIdx]);
+  if (titles[maxIdx].length < 10) {
+    return "";
+  }
   return titles[maxIdx];
 }
 
@@ -243,9 +291,11 @@ var scheduler = {
   },
   run:function (s) {
     if(document.hidden)return;
+    Bot.onAddPeopleDialog(s.query);
     BotApi(s.query,function (msg) {
       Dialog.setContent(msg)
       console.log(s.name, msg);
+      Bot.onAddBotDialog(msg);
       s.callback(msg);
     });
   }
@@ -259,8 +309,11 @@ $(document).ready(function() {
   setTimeout(function () {
     // Bot.onChatWindowShow();
     var kw = extractKeywords();
-    // Bot.onAddPeopleDialog(kw);
+    if (kw == "") {
+      return;
+    }
 
+    // Bot.onAddPeopleDialog(kw);
     BotApi(kw ,function (msg) {
       Dialog.setContent(msg)
       // Bot.onAddBotDialog(msg);
