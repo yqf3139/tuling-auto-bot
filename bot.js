@@ -1,7 +1,8 @@
 'use strict';
 console.log('bot js starts');
 
-var BotApiKey = 'ca94c42bbff13ed8710e26f100dfdf14';
+var BotApiKey = '0fd993f6832d69da5bd2a4a491d0adf5'
+// 'ca94c42bbff13ed8710e26f100dfdf14';
 
 var msgDialog = $('#react');
 var loader = $('.loader');

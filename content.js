@@ -238,8 +238,7 @@ var Dialog = {
   },
   popMessage: function() {
     var dialog = d.getElementById('response');
-    console.log('msglist.length', Dialog.msglist.length);
-
+    // console.log('msglist.length', Dialog.msglist.length);
     if (Dialog.msglist.length == 0) return;
 
     var topMessage = Dialog.msglist.shift();
@@ -351,19 +350,19 @@ function Schedule(name, interval, query, callback) {
 
 var scheduler = {
   schedules: [
-    new Schedule("lauch",5,"给我一些午餐菜谱",function (msg) {
+    new Schedule("lauch",1,"午餐菜谱",function (msg) {
 
     }),
-    new Schedule("weather",3,"上海的天气",function (msg) {
+    new Schedule("weather",3,"上海天气",function (msg) {
 
     }),
-    new Schedule("news",10,"看新闻",function (msg) {
+    new Schedule("news",5,"看新闻",function (msg) {
 
     }),
   ],
   que:[],
   start:function () {
-    setInterval(scheduler.loop, 1000*60);
+    setInterval(scheduler.loop, 1000*20);
   },
   loop:function () {
     for (var i = 0; i < scheduler.schedules.length; i++) {
@@ -408,7 +407,7 @@ $(document).ready(function() {
       // Bot.onAddBotDialog(msg);
       console.log(msg)
     });
-  }, 2000);
+  }, 200);
 
   setInterval(function() {
     Dialog.popMessage();
