@@ -43,6 +43,7 @@ function showSelect(event) {
 BotHooks.push(
   function () {
     var urls = document.querySelectorAll('a');
+
     for (var i = 0; i < urls.length; i++) {
       if (urls[i].textContent.length < 10) {
         continue;
@@ -63,9 +64,27 @@ BotHooks.push(
     // hook for ICBC http://www.icbc.com.cn/ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/
     if (window.location.host == 'www.icbc.com.cn') {
       var icbc = document.querySelector('a[href="http://www.icbc.com.cn/ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/"]');
-      icbc.addEventListener("mouseover", function () {
-        Dialog.createGraphDialog()
-      });
+      if (icbc != null) {
+        icbc.addEventListener("mouseover", function () {
+          Dialog.createGraphDialog()
+        });
+      }
+
+      // partition /ICBC/%e4%b8%aa%e4%ba%ba%e4%b8%9a%e5%8a%a1
+      var icbc2 = document.querySelector('a[href="/ICBC/%e4%b8%aa%e4%ba%ba%e4%b8%9a%e5%8a%a1"]');
+      if (icbc2 != null) {
+        icbc2.addEventListener("mouseover", function () {
+          Dialog.createGraphDialogPartition()
+        });
+      }
+
+    //  partition /ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/%e5%9f%ba%e9%87%91%e5%b9%b3%e5%8f%b0/
+      var icbc3 = document.querySelector('a[href="http://www.icbc.com.cn/ICBC/%E7%BD%91%E4%B8%8A%E5%9F%BA%E9%87%91/%E6%96%B0%E5%8F%91%E5%9F%BA%E9%87%91/default.htm"]');
+      if (icbc3 != null) {
+        icbc3.addEventListener("mouseover", function () {
+          Dialog.createGraphDialogLine()
+        });
+      }
     }
   }
 );
@@ -244,7 +263,45 @@ var Dialog = {
     // log.appendChild(msgContent);
     dialog.appendChild(log);
 
+    drawbubble(10,10,null,msgContent);
+  },
+  createGraphDialogLine: function() {
+    var log = d.createElement('div');
+    var dialog = d.getElementById('response');
+    log.classList.add('bot-react');
+    log.classList.add('triangle-border');
+
+    // .addClass('bot-react triangle-border');
+    var msgContent = d.createElement('div');//.text(message)
+    var id = (new Date()).getTime();
+    msgContent.id = id;
+    // msgContent.innerHTML = "sdf";
+    log.appendChild(msgContent);
+    //msgContent.innerHTML = message;
+    // msgContent.style.visibility = 'hidden';
+    // log.appendChild(msgContent);
+    dialog.appendChild(log);
+
     drawline(10,10,null,msgContent);
+  },
+  createGraphDialogPartition: function() {
+    var log = d.createElement('div');
+    var dialog = d.getElementById('response');
+    log.classList.add('bot-react');
+    log.classList.add('triangle-border');
+
+    // .addClass('bot-react triangle-border');
+    var msgContent = d.createElement('div');//.text(message)
+    var id = (new Date()).getTime();
+    msgContent.id = id;
+    // msgContent.innerHTML = "sdf";
+    log.appendChild(msgContent);
+    //msgContent.innerHTML = message;
+    // msgContent.style.visibility = 'hidden';
+    // log.appendChild(msgContent);
+    dialog.appendChild(log);
+
+    drawpartition(10,10,null,msgContent);
   },
   popMessage: function() {
     var dialog = d.getElementById('response');
@@ -285,6 +342,18 @@ var Bot = {
     // Robot Cat
     $.get(chrome.extension.getURL('/views/bot.html'), function(data) {
       $(data).appendTo('body');
+
+      var botImg = document.querySelector('#tbot');
+      var isBotHidden = true;
+      botImg.addEventListener('click',function () {
+        isBotHidden = !isBotHidden;
+        if (isBotHidden) {
+          Bot.onChatWindowHide();
+        }else {
+          Bot.onChatWindowShow();
+        }
+      });
+
     });
 
   },
