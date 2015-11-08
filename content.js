@@ -105,14 +105,20 @@ var Dialog = {
     dialog.appendChild(log);
   },
   popMessage: function() {
-    console.log('msglist.length', Dialog.msglist.length);
+    // console.log('msglist.length', Dialog.msglist.length);
     if (Dialog.msglist.length !== 0) {
       var topMessage = Dialog.msglist.shift();
       Dialog.createDialog(topMessage);
       var dialog = d.getElementById('response');
-      console.log('node', topMessage, dialog.childNodes[0])
+      // console.log('node', topMessage, dialog.childNodes[0])
       setTimeout(function() {
-        dialog.removeChild(dialog.childNodes[0]);
+        var top = $('.bot-react').first()
+        // console.log($(top).text())
+        $(top).fadeOut(500, function() {
+          $(this).remove()
+        })
+
+        // dialog.removeChild(dialog.childNodes[0]);
       }, 2000)
     }
   },
@@ -206,25 +212,25 @@ function Schedule(name, interval, query, callback) {
 
 var scheduler = {
   schedules: [
-    new Schedule("lauch",5,"午餐菜谱",function (msg) {
+    new Schedule("lauch", 6 ,"午餐菜谱",function (msg) {
 
     }),
-    new Schedule("weather",3,"今日上海天气",function (msg) {
+    new Schedule("weather",8,"今日上海天气",function (msg) {
 
     }),
-    new Schedule("news",10,"我要看新闻",function (msg) {
+    new Schedule("news",5,"我要看新闻",function (msg) {
 
     }),
   ],
   que:[],
   start:function () {
-    setInterval(scheduler.loop, 1000*60);
+    setInterval(scheduler.loop, 1000);
   },
   loop:function () {
     for (var i = 0; i < scheduler.schedules.length; i++) {
       var item = scheduler.schedules[i]
       item.counter++;
-      if (item.counter == item.interval) {
+      if (item.counter % 10 == item.interval) {
         que.push(item);
       }
     }
