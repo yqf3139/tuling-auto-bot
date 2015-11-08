@@ -262,7 +262,124 @@ var drawpartition = function(width, height, items, path) {
 		.text(function(d) { return d.name; }); 	
 }
 
+var drawcompare = function(width, height, items, path) {
+    
+	
+	var width  = 300;
+	var height = 200;
+			
+	var svg = d3.select(path)			
+				.append("svg")			
+				.attr("width", width)	
+				.attr("height", height);
+	
+	var items = [
+        { name: "PC" , 
+		  sales: [	{ year:2005, profit: 3000 },
+					{ year:2006, profit: 1300 },
+					{ year:2007, profit: 3700 },
+					{ year:2008, profit: 4900 },
+					{ year:2009, profit: 700 }] },
+		{ name: "SmartPhone" , 
+		  sales: [	{ year:2005, profit: 2000 },
+					{ year:2006, profit: 4000 },
+					{ year:2007, profit: 1810 },
+					{ year:2008, profit: 6540 },
+					{ year:2009, profit: 2820 }] },
+		{ name: "Software" , 
+		  sales: [	{ year:2005, profit: 1100 },
+					{ year:2006, profit: 1700 },
+					{ year:2007, profit: 1680 },
+					{ year:2008, profit: 4000 },
+					{ year:2009, profit: 4900 }] }
+    ];
+	
+	
+	//2. 转换数据
+	var stack = d3.layout.stack()
+					.values(function(d){ return d.sales; })
+					.x(function(d){ return d.year; })
+					.y(function(d){ return d.profit; });
 
+	var data = stack(items);
+
+	console.log(data);
+		
+		
+
+	var padding = { left:50, right:100, top:30, bottom:30 };
+	
+	var xRangeWidth = width - padding.left - padding.right;
+		
+	var xScale = d3.scale.ordinal()
+					.domain(data[0].sales.map(function(d){ return d.year; }))
+					.rangeBands([0, xRangeWidth],0.3);
+
+
+	var maxProfit = d3.max(data[data.length-1].sales, function(d){ 
+							return d.y0 + d.y; 
+					});
+
+	var yRangeWidth = height - padding.top - padding.bottom;
+	
+	var yScale = d3.scale.linear()
+					.domain([0, maxProfit])		
+					.range([0, yRangeWidth]);	
+	
+	
+
+	var color = d3.scale.category10();
+
+	var groups = svg.selectAll("g")
+					.data(data)
+					.enter()
+					.append("g")
+					.style("fill",function(d,i){ return color(i); });
+		
+	var rects = groups.selectAll("rect")
+					.data(function(d){ return d.sales; })
+					.enter()
+					.append("rect")
+					.attr("x",function(d){ return xScale(d.year); })
+					.attr("y",function(d){ return yRangeWidth - yScale( d.y0 + d.y ); })
+					.attr("width",function(d){ return xScale.rangeBand(); })
+					.attr("height",function(d){ return yScale(d.y); })
+					.attr("transform","translate(" + padding.left + "," + padding.top + ")");
+	
+	var xAxis = d3.svg.axis()
+				.scale(xScale)
+				.orient("bottom");
+		
+	yScale.range([yRangeWidth, 0]);
+	
+	var yAxis = d3.svg.axis()
+					.scale(yScale)
+					.orient("left");
+					
+	svg.append("g")
+			.attr("class","axis")
+			.attr("transform","translate(" + padding.left + "," + (height - padding.bottom) +  ")")
+			.call(xAxis);
+				
+	svg.append("g")
+			.attr("class","axis")
+			.attr("transform","translate(" + padding.left + "," + (height - padding.bottom - yRangeWidth) +  ")")
+			.call(yAxis); 
+			
+	var labHeight = 50;
+	var labRadius = 10;
+	
+	var labelCircle = groups.append("circle")
+						.attr("cx",function(d){ return width - padding.right*0.98; })
+						.attr("cy",function(d,i){ return padding.top * 2 + labHeight * i; })
+						.attr("r",labRadius);
+					
+	var labelText = groups.append("text")
+						.attr("x",function(d){ return width - padding.right*0.8; })
+						.attr("y",function(d,i){ return padding.top * 2 + labHeight * i; })
+						.attr("dy",labRadius/2)
+						.text(function(d){ return d.name; });
+}
 
 function classes(root) {
     var classes = [];
