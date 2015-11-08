@@ -23,6 +23,7 @@ function showSelect(event) {
       Bot.onAddPeopleDialog(str);
       BotApi(str ,function (msg) {
         Bot.onAddBotDialog(msg);
+        Dialog.setContent(msg);
       });
     }
   }
@@ -47,6 +48,13 @@ BotHooks.push(
       if(!hasChinese)continue;
       urls[i].addEventListener("mouseover", BotOnMouseOver);
     }
+  },
+  function () {
+    // hook for ICBC http://www.icbc.com.cn/ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/
+    var icbc = document.querySelector('a[href="http://www.icbc.com.cn/ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/"]');
+    icbc.addEventListener("mouseover", function () {
+      Dialog.createGraphDialog()
+    });
   }
 );
 
@@ -108,11 +116,15 @@ var Dialog = {
     ChromeApi(dialogBotUrl, function (raw) {
       var view = parser.parseFromString(raw, "text/html");
       Bot.botTpl = view.children[0].children[1].children[0];
+
+      Bot.onChatWindowHide();
+
     });
     var dialogHistoryUrl = chrome.extension.getURL('views/dialoghistory.html');
     ChromeApi(dialogHistoryUrl, function (raw) {
       var view = parser.parseFromString(raw, "text/html");
       Bot.historyTpl = view.children[0].children[1].children[0];
+
     });
     var dialogPeopleUrl = chrome.extension.getURL('views/dialogpeople.html');
     ChromeApi(dialogPeopleUrl, function (raw) {
@@ -130,7 +142,7 @@ var Dialog = {
     Dialog.msglist.push(message);
     console.log('setContent', message);
     // document.getElementById('react').textContent = message;
-    
+
     // loader.hide();
 
     // setTimeout(function() {
@@ -145,11 +157,30 @@ var Dialog = {
 
     // .addClass('bot-react triangle-border');
     var msgContent = d.createElement('p');//.text(message)
-    msgContent.appendChild(log);
+    // msgContent.appendChild(log);
     msgContent.innerHTML = message;
     // msgContent.style.visibility = 'hidden';
     log.appendChild(msgContent);
     dialog.appendChild(log);
+  },
+  createGraphDialog: function() {
+    var log = d.createElement('div');
+    var dialog = d.getElementById('response');
+    log.classList.add('bot-react');
+    log.classList.add('triangle-border');
+
+    // .addClass('bot-react triangle-border');
+    var msgContent = d.createElement('p');//.text(message)
+    var id = (new Date()).getTime();
+    msgContent.id = id;
+    msgContent.innerHTML = "sdf";
+    log.appendChild(msgContent);
+    //msgContent.innerHTML = message;
+    // msgContent.style.visibility = 'hidden';
+    // log.appendChild(msgContent);
+    dialog.appendChild(log);
+
+    // drawline(10,10,null,"p#id");
   },
   popMessage: function() {
     var dialog = d.getElementById('response');
@@ -161,7 +192,7 @@ var Dialog = {
       setTimeout(function() {
         var top = $('.bot-react').first()
         // console.log($(top).text())
-        $(top).fadeOut(500, function() {
+        $(top).fadeOut(2000, function() {
           $(this).remove()
         })
 
@@ -179,7 +210,7 @@ var Bot = {
   boxTpl:null,
   diaList:null,
   onInit:function () {
-    // Dialog.init();
+    Dialog.init();
     // Robot Cat
     $.get(chrome.extension.getURL('/views/bot.html'), function(data) {
       $(data).appendTo('body');
@@ -229,10 +260,6 @@ var Bot = {
   },
 }
 
-
-  
-
-
 function extractKeywords() {
   var titles = document.title.split(' ');
   var maxIdx = 0;
@@ -273,13 +300,13 @@ var scheduler = {
   ],
   que:[],
   start:function () {
-    setInterval(scheduler.loop, 1000);
+    setInterval(scheduler.loop, 1000*60);
   },
   loop:function () {
     for (var i = 0; i < scheduler.schedules.length; i++) {
       var item = scheduler.schedules[i]
       item.counter++;
-      if (item.counter % 10 == item.interval) {
+      if (item.counter == item.interval) {
         item.counter = 0;
         scheduler.que.push(item);
       }
@@ -304,8 +331,7 @@ var scheduler = {
 $(document).ready(function() {
   scheduler.start();
   Bot.onInit();
-  // Bot.onChatWindowShow();
-  // console.log('onInit');
+  console.log('onInit');
   setTimeout(function () {
     // Bot.onChatWindowShow();
     var kw = extractKeywords();
@@ -324,5 +350,5 @@ $(document).ready(function() {
   setInterval(function() {
     Dialog.popMessage();
 
-  }, 1000)
+  }, 200)
 });
