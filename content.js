@@ -31,11 +31,13 @@ document.onkeydown = function(e) {
 	return true;
 }
 
-
-var msgDialog = $('#react');
-var loader = $('.loader');
+var d = document;
+// var msgDialog = d.getElementById('response');
+// console.log('msgDialog', msgDialog)
+// var loader = $('.loader');
 
 var Dialog = {
+  msglist: [],
   init: function() {
     // create some html elements and then hide
     var dialogBoxUrl = chrome.extension.getURL('views/dialogbox.html');
@@ -79,9 +81,40 @@ var Dialog = {
     }
   },
   setContent: function(message) {
-    console.log('setContent', message)
-    document.getElementById('react').textContent = message;
-    loader.hide();
+    Dialog.msglist.push(message);
+    console.log('setContent', message);
+    // document.getElementById('react').textContent = message;
+    
+    // loader.hide();
+
+    // setTimeout(function() {
+    //   $(log).fadeOut();
+    // }, 1000)
+  },
+  createDialog: function(message) {
+    var log = d.createElement('div');
+    var dialog = d.getElementById('response');
+    log.classList.add('bot-react');
+    log.classList.add('triangle-border');
+
+    // .addClass('bot-react triangle-border');
+    var msgContent = d.createElement('p');//.text(message)
+    msgContent.appendChild(log);
+    msgContent.innerHTML = message;
+    log.appendChild(msgContent);
+    dialog.appendChild(log);
+  },
+  popMessage: function() {
+    console.log('msglist.length', Dialog.msglist.length);
+    if (Dialog.msglist.length !== 0) {
+      var topMessage = Dialog.msglist.shift();
+      Dialog.createDialog(topMessage);
+      var dialog = d.getElementById('response');
+      console.log('node', topMessage, dialog.childNodes[0])
+      setTimeout(function() {
+        dialog.removeChild(dialog.childNodes[0]);
+      }, 2000)
+    }
   },
 }
 
@@ -225,4 +258,9 @@ $(document).ready(function() {
       console.log(msg)
     });
   }, 2000);
+
+  setInterval(function() {
+    Dialog.popMessage();
+
+  }, 1000)
 });
