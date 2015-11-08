@@ -150,7 +150,6 @@ var Dialog = {
         text = message
       else 
         text = message.text
-      msgContent.appendChild(log);
       msgContent.innerHTML = text;
     }
     else if (type == 'news') {
