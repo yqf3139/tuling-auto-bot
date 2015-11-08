@@ -59,10 +59,12 @@ BotHooks.push(
   },
   function () {
     // hook for ICBC http://www.icbc.com.cn/ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/
-    var icbc = document.querySelector('a[href="http://www.icbc.com.cn/ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/"]');
-    icbc.addEventListener("mouseover", function () {
-      Dialog.createGraphDialog()
-    });
+    if (window.location.host == 'www.icbc.com.cn') {
+      var icbc = document.querySelector('a[href="http://www.icbc.com.cn/ICBC/%e7%bd%91%e4%b8%8a%e5%9f%ba%e9%87%91/"]');
+      icbc.addEventListener("mouseover", function () {
+        Dialog.createGraphDialog()
+      });
+    }
   }
 );
 
