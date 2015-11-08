@@ -30,3 +30,15 @@ var BotApi = function (query, callback){
   };
   xhr.send();
 }
+
+var TagApi = function (data, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://10.209.203.6:3000/word/tag', true);
+  xhr.onload = function () {
+      // console.log(this.responseText);
+      callback(this.responseText);
+  };
+  console.log("text="+encodeURI(data.text));
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhr.send("text="+encodeURI(data.text));
+}

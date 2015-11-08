@@ -19,10 +19,19 @@ function showSelect(event) {
   {
     str = window.getSelection().getRangeAt(0).cloneContents().textContent;
     if (str.length > 1) {
-      Bot.onAddPeopleDialog(str);
-      BotApi(str ,function (msg) {
-        Bot.onAddBotDialog(msg);
-      });
+      if (str.length > 200) {
+        digestContent(str, function (asycStr) {
+          Bot.onAddPeopleDialog(asycStr);
+          BotApi(asycStr ,function (msg) {
+            Bot.onAddBotDialog(msg);
+          });
+        });
+      }else {
+        Bot.onAddPeopleDialog(str);
+        BotApi(str ,function (msg) {
+          Bot.onAddBotDialog(msg);
+        });
+      }
     }
   }
   console.log(str);
@@ -57,6 +66,14 @@ var BotOnMouseOver = function (e) {
   console.log(e.srcElement.textContent);
 }
 
+function digestContent(content, callback) {
+  console.log('digestContent', content);
+  TagApi({text:content}, function (msg) {
+    console.log(msg);
+    callback(msg);
+  });
+}
+
 document.onkeydown = function(e) {
 	// 兼容FF和IE和Opera
 	var theEvent = e || window.event;
@@ -65,6 +82,7 @@ document.onkeydown = function(e) {
 	if (code == 13 && activeElement == Bot.textarea) {
     console.log(code);
     var content = Bot.textarea.value;
+
     Bot.onAddPeopleDialog(content);
     BotApi(content ,function (msg) {
       Bot.onAddBotDialog(msg);
@@ -135,6 +153,9 @@ var Bot = {
     Bot.boxTpl.style.visibility = 'hidden';
   },
   onAddPeopleDialog:function (msg) {
+    if (msg == undefined) {
+      return;
+    }
     var peopleDialog = Bot.peopleTpl.cloneNode(true);
     // debugger;
     var ctn = peopleDialog.querySelector('.bd-bear-dialog-item');
@@ -144,6 +165,9 @@ var Bot = {
     peopleDialog.scrollTop = peopleDialog.scrollHeight;
   },
   onAddBotDialog:function (msg) {
+    if (msg == undefined) {
+      return;
+    }
     var botDialog = Bot.botTpl.cloneNode(true);
     // debugger;
     var ctn = botDialog.querySelector('.bd-bear-dialog-content');
@@ -193,13 +217,13 @@ function Schedule(name, interval, query, callback) {
 
 var scheduler = {
   schedules: [
-    new Schedule("lauch",5,"午餐菜谱",function (msg) {
+    new Schedule("lauch",5,"给我一些午餐菜谱",function (msg) {
 
     }),
-    new Schedule("weather",3,"今日上海天气",function (msg) {
+    new Schedule("weather",3,"上海的天气",function (msg) {
 
     }),
-    new Schedule("news",10,"我要看新闻",function (msg) {
+    new Schedule("news",10,"看新闻",function (msg) {
 
     }),
   ],
