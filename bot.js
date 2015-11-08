@@ -29,7 +29,7 @@ var BotApi = function (query, callback){
       var Obj = JSON.parse(this.responseText);
       if(Obj == null)return;
       if (Obj.code != 100000) {
-        console.error(Obj);
+        console.log(Obj);
       }
       Dialog.setContent(Obj.text);
       callback(Obj.text);
