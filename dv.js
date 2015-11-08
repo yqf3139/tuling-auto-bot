@@ -1,8 +1,8 @@
-﻿var drawline = function(width, height, items) {
+﻿var drawline = function(width, height, items, path) {
     
     var margin = {top: 40, right: 20, bottom: 30, left: 40},
-    width = 600 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    width = 200 - margin.left - margin.right,
+    height = 200 - margin.top - margin.bottom;
     
     items = [
     {
@@ -38,8 +38,9 @@
         
     var color = d3.scale.category10();
     
+    var formsvg = d3.select(path).selectAll("svg").remove();
     
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select(path).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -82,21 +83,22 @@
 }
 
 
-var drawpie = function(width, height, items) {
+var drawpie = function(width, height, items, path) {
 	
-	width = 600;
-	height = 600;
+	width = 200;
+	height = 200;
 	items = [
 	{
 		name:"hello",
 		value:10
 	}
 	]
-
-	var svg = d3.select("body").append("svg")
+    console.log("in draw");
+	var svg = d3.select(path).append("svg")
 							.attr("width",width)
 							.attr("height",height);
-
+                            
+    var formsvg = d3.select(path).selectAll("svg").remove();
 	var pie = d3.layout.pie().value(function (d) {  
                         return d.value;  
                     });
@@ -115,7 +117,7 @@ var drawpie = function(width, height, items) {
 				  .append("g")
 				  .attr("transform","translate("+outerRadius+","+outerRadius+")");
 				  
- 	arcs.append("path")
+ 	arcs.append(path)
 		.attr("fill",function(d,i){
 			return color(i);
 		})
@@ -134,9 +136,9 @@ var drawpie = function(width, height, items) {
 		}); 
 }
 
-var drawbubble = function(width, height, items) {
-	width = 600
-    height = 600
+var drawbubble = function(width, height, items, path) {
+	width = 200
+    height = 200
     var format = d3.format(",d"),
     color = d3.scale.category10();
     
@@ -175,8 +177,9 @@ var drawbubble = function(width, height, items) {
         .sort(null)
         .size([width, height])
         .padding(1.5);
-
-    var svg = d3.select("body").append("svg")
+        
+    var formsvg = d3.select(path).selectAll("svg").remove();
+    var svg = d3.select(path).append("svg")
         .attr("width", width)
         .attr("height", height)
         .attr("class", "bubble");
@@ -201,9 +204,9 @@ var drawbubble = function(width, height, items) {
           .text(function(d) { return d.className.substring(0, d.r / 3); });
 }
 
-var drawpartition = function(width, height, items) {
-	width = 600
-    height = 600
+var drawpartition = function(width, height, items, path) {
+	width = 200
+    height = 200
     var radius = Math.min(width, height) / 2,
     color = d3.scale.category20c();
     
@@ -238,7 +241,9 @@ var drawpartition = function(width, height, items) {
         ]
     }
     
-    var svg = d3.select("body").append("svg")
+    var formsvg = d3.select(path).selectAll("svg").remove();
+    
+    var svg = d3.select(path).append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
