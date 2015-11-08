@@ -163,83 +163,103 @@ var drawbubble = function(width, height, items, path) {
 }
 
 var drawpartition = function(width, height, items, path) {
-	width = 200
-    height = 200
-    var radius = Math.min(width, height) / 2,
-    color = d3.scale.category20c();
-    
-    items = {
-        "name": "flare",
+    var width = 200,
+    height = 200,
+	radius =  Math.min(width, height) / 2 ,
+    color = d3.scale.category20();
+	items = {
+        "name": "投资选择",
         "children": [
         {
-            "name": "analytics",
+            "name": "工行",
             "children": [
             {
-                "name": "cluster",
+                "name": "基金",
                 "children": [
-                {"name": "AgglomerativeCluster", "size": 3938},
-                {"name": "CommunityStructure", "size": 3812}
+                {"name": "新产品", "size": 3938},
+                {"name": "货币型", "size": 3812}
                 ]
             },
             {
-                "name": "graph",
+                "name": "保险",
                 "children": [
-                {"name": "BetweennessCentrality", "size": 3534},
-                {"name": "LinkDistance", "size": 5731},
-                {"name": "SpanningTree", "size": 3416}
+                {"name": "理财险", "size": 3534},
+                {"name": "医疗险", "size": 5731}
                 ]
             },
             {
-                "name": "optimization",
+                "name": "债券",
                 "children": [
-                {"name": "AspectRatioBanker", "size": 7074}
+                {"name": "国债", "size": 7074}
                 ]
             }]
         }
         ]
     }
-    
-    var formsvg = d3.select(path).selectAll("svg").remove();
-    
     var svg = d3.select(path).append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + height * .52 + ")");
+		.attr("width", width)
+		.attr("height", height)
+		.append("g")
+		.attr("transform", "translate(" + radius + "," + radius + ")");
 
     var partition = d3.layout.partition()
-        .sort(null)
-        .size([2 * Math.PI, radius * radius])
-        .value(function(d) { return 1; });
-
+		.sort(null)
+		.size([2 * Math.PI, radius * radius])
+		.value(function(d) { return 1; });
+				
     var arc = d3.svg.arc()
-        .startAngle(function(d) { return d.x; })
-        .endAngle(function(d) { return d.x + d.dx; })
-        .innerRadius(function(d) { return Math.sqrt(d.y); })
-        .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+		.startAngle(function(d) { return d.x; })
+		.endAngle(function(d) { return d.x + d.dx; })
+		.innerRadius(function(d) { return Math.sqrt(d.y); })
+		.outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
-    var path = svg.datum(items).selectAll("path")
-        .data(partition.nodes)
-        .enter().append("path")
-        .attr("display", function(d) { return d.depth ? null : "none"; }) // hide inner ring
-        .attr("d", arc)
-        .style("stroke", "#fff")
-        .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
-        .style("fill-rule", "evenodd")
-        .each(stash)
-        
-    
-    d3.selectAll("input").on("change", function change() {
-        var value = this.value === "count"
-            ? function() { return 1; }
-            : function(d) { return d.size; };
-    
-        path
-            .data(partition.value(value).nodes)
-            .transition()
-            .duration(1500)
-            .attrTween("d", arcTween);
-    });
+
+	var nodes = partition.nodes(items);
+	var links = partition.links(nodes);
+
+	console.log(nodes);
+
+	var arcs = svg.selectAll("g")
+				  .data(nodes)
+				  .enter().append("g");
+	
+	arcs.append("path")
+		.attr("display", function(d) { return d.depth ? null : "none"; }) // hide inner ring
+		.attr("d", arc)
+		.style("stroke", "#fff")
+		.style("fill", function(d) { return color((d.children ? d : d.parent).name); })
+		.on("mouseover",function(d){
+			d3.select(this)
+				.style("fill","yellow");
+		})
+		.on("mouseout",function(d){
+			d3.select(this)
+				.transition()
+				.duration(200)
+				.style("fill", function(d) { 
+					return color((d.children ? d : d.parent).name); 
+				});
+		});
+
+				  
+	arcs.append("text")  
+		.style("font-size", "12px")
+		.style("font-family", "simsun")
+		.attr("text-anchor","middle")
+		.attr("transform",function(d,i){
+				if( i == 0 )
+					return "translate(" + arc.centroid(d) + ")";
+
+				var r = 0;
+				if( (d.x+d.dx/2)/Math.PI*180 < 180 ) 
+					r = 180 * ((d.x + d.dx / 2 - Math.PI / 2) / Math.PI);
+				else  
+					r = 180 * ((d.x + d.dx / 2 + Math.PI / 2) / Math.PI);
+					
+				return  "translate(" + arc.centroid(d) + ")" +
+						"rotate(" + r + ")";
+		}) 
+		.text(function(d) { return d.name; }); 	
 }
 
 
