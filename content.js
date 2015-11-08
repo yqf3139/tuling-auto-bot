@@ -24,12 +24,14 @@ function showSelect(event) {
         digestContent(str, function (asycStr) {
           Bot.onAddPeopleDialog(asycStr);
           BotApi(asycStr ,function (msg) {
+            Dialog.setContent(msg);
             Bot.onAddBotDialog(msg);
           });
         });
       }else {
         Bot.onAddPeopleDialog(str);
         BotApi(str ,function (msg) {
+          Dialog.setContent(msg);
           Bot.onAddBotDialog(msg);
         });
       }
@@ -71,6 +73,7 @@ BotHooks.push(
 var BotOnMouseOver = function (e) {
   Bot.onAddPeopleDialog(e.srcElement.textContent);
   BotApi(e.srcElement.textContent ,function (msg) {
+    Dialog.setContent(msg);
     Bot.onAddBotDialog(msg);
   });
   console.log(e.srcElement.textContent);
@@ -95,8 +98,8 @@ document.onkeydown = function(e) {
 
     Bot.onAddPeopleDialog(content);
     BotApi(content ,function (msg) {
+      Dialog.setContent(msg);
       Bot.onAddBotDialog(msg);
-      // Dialog.setContent(msg);
     });
     Bot.textarea.value = "";
 		return false;
@@ -125,8 +128,8 @@ var Dialog = {
         var content = Bot.textarea.value;
         Bot.onAddPeopleDialog(content);
         BotApi(content ,function (msg) {
+          Dialog.setContent(msg);
           Bot.onAddBotDialog(msg);
-          // Dialog.setContent(msg)
         });
         Bot.textarea.value = "";
       });
@@ -161,11 +164,18 @@ var Dialog = {
   setContent: function(message, type) {
     if (!type)
       type = 'text'
-    Dialog.msglist.push({
-      message: message,
-      type: type,
-    });
-    // console.log('setContent', message);
+    if (type == 'schedule') {
+      Dialog.msglist.unshift({
+        message: message,
+        type: type,
+      });
+    }
+    else {
+      Dialog.msglist.push({
+        message: message,
+        type: type,
+      });      
+    }
 
   },
   createDialog: function(message, type) {
@@ -175,22 +185,13 @@ var Dialog = {
     log.classList.add('bot-react');
     log.classList.add('triangle-border');
 
-
-    if (type == 'text') {
-      var msgContent = d.createElement('p');
-      var text
-      if (typeof message === 'string')
-        text = message
-      else
-        text = message.text
-      msgContent.innerHTML = text;
-    }
-    else if (type == 'news') {
+    
+    if (type == 'news') {
       var article, source, detailurl
       article = message.article
       source = message.source
       detailurl = message.detailurl
-      var text = $('<p />').text(article + '\n' + '来自: ' + source)
+      var text = $('<p />').text(article + '<br>' + '来自: ' + source)
 
       var msgContent = $('<a> /' ,{
         href: detailurl
@@ -212,6 +213,15 @@ var Dialog = {
       var infoNode = $('<p />').text(info).appendTo(msgContent)
       var nameNode = $('<p />').text('来自: ' + name).appendTo(msgContent)
 
+    }
+    else {
+      var msgContent = d.createElement('p');
+      var text
+      if (typeof message === 'string')
+        text = message
+      else
+        text = message.text
+      msgContent.innerHTML = text;
     }
     $(log).append($(msgContent));
 
@@ -389,7 +399,7 @@ var scheduler = {
     if(document.hidden)return;
     Bot.onAddPeopleDialog(s.query);
     BotApi(s.query,function (msg) {
-      // Dialog.setContent(msg)
+      Dialog.setContent(msg, 'schedule');
       console.log(s.name, msg);
       Bot.onAddBotDialog(msg);
       s.callback(msg);
@@ -410,8 +420,7 @@ $(document).ready(function() {
 
     // Bot.onAddPeopleDialog(kw);
     BotApi(kw ,function (msg) {
-      // Dialog.setContent(msg)
-      // Bot.onAddBotDialog(msg);
+      Bot.onAddBotDialog(msg);
       console.log(msg)
     });
   }, 200);

@@ -32,7 +32,6 @@ var BotApi = function (query, callback){
       // if (Obj.code != 100000) {
       // }
       console.log(Obj);
-      Dialog.setContent(Obj.text);
       Rule.filter(Obj);
       callback(Obj.text);
   };
