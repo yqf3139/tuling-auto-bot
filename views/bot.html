@@ -1,0 +1,23 @@
+<div id="response">
+<!--   <div class="bot-react triangle-border">
+    <p class="react">msg1</p>
+  </div>
+  <div class="bot-react triangle-border">
+    <p class="react">msg2</p>
+  </div> -->
+</div>
+<div id="tbot" class="bot"></div>
+<script type="text/javascript">
+var tbot = $('#tbot')
+$('<img />', {
+  id: "tbotImage",
+  src: chrome.extension.getURL('/imgs/octocat.gif'),
+})
+.addClass('botImg')
+.appendTo(tbot)
+tbot.appendTo('body')
+
+$('#botReact').hide().fadeIn(300)
+
+
+</script>
