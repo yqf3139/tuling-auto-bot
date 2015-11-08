@@ -69,7 +69,7 @@ document.onkeydown = function(e) {
     Bot.onAddPeopleDialog(content);
     BotApi(content ,function (msg) {
       Bot.onAddBotDialog(msg);
-      Dialog.setContent(msg);
+      // Dialog.setContent(msg);
     });
     Bot.textarea.value = "";
 		return false;
@@ -99,7 +99,7 @@ var Dialog = {
         Bot.onAddPeopleDialog(content);
         BotApi(content ,function (msg) {
           Bot.onAddBotDialog(msg);
-          Dialog.setContent(msg)
+          // Dialog.setContent(msg)
         });
         Bot.textarea.value = "";
       });
@@ -330,7 +330,7 @@ var scheduler = {
     if(document.hidden)return;
     Bot.onAddPeopleDialog(s.query);
     BotApi(s.query,function (msg) {
-      Dialog.setContent(msg)
+      // Dialog.setContent(msg)
       console.log(s.name, msg);
       Bot.onAddBotDialog(msg);
       s.callback(msg);
@@ -352,7 +352,7 @@ $(document).ready(function() {
 
     // Bot.onAddPeopleDialog(kw);
     BotApi(kw ,function (msg) {
-      Dialog.setContent(msg)
+      // Dialog.setContent(msg)
       // Bot.onAddBotDialog(msg);
       console.log(msg)
     });
