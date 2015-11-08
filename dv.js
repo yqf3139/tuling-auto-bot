@@ -1,21 +1,33 @@
 ﻿var drawline = function(width, height, items, path) {
     
     var margin = {top: 40, right: 20, bottom: 30, left: 40},
-    width = 200 - margin.left - margin.right,
+    width = 300 - margin.left - margin.right,
     height = 200 - margin.top - margin.bottom;
     
     items = [
     {
-        "name":"知乎",
-        "frequency":0.5
+        "name":"工银瑞信",
+        "frequency":0.43
     },
     {
-        "name":"豆瓣",
-        "frequency":0.3
+        "name":"汇添富",
+        "frequency":0.38
     },
-        {
-        "name":"百度",
-        "frequency":0.2
+    {
+        "name":"东海",
+        "frequency":0.29
+    },
+    {
+        "name":"财通",
+        "frequency":0.21
+    },
+    {
+        "name":"长信",
+        "frequency":0.245
+    },
+    {
+        "name":"东方",
+        "frequency":0.234
     }
     ]
     
@@ -74,7 +86,7 @@
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function(d) { return x(d.name); })
-        .attr("width", x.rangeBand())
+        .attr("width", x.rangeBand()/3)
         .attr("y", function(d) { return y(d.frequency); })
         .attr("height", function(d) { return height - y(d.frequency); })
         .attr("fill",function(d,i){
@@ -83,59 +95,6 @@
 }
 
 
-var drawpie = function(width, height, items, path) {
-	
-	width = 200;
-	height = 200;
-	items = [
-	{
-		name:"hello",
-		value:10
-	}
-	]
-    console.log("in draw");
-	var svg = d3.select(path).append("svg")
-							.attr("width",width)
-							.attr("height",height);
-                            
-    var formsvg = d3.select(path).selectAll("svg").remove();
-	var pie = d3.layout.pie().value(function (d) {  
-                        return d.value;  
-                    });
-	console.log(pie(items))
-	var outerRadius = width / 2;
-	var innerRadius = width / 4;
-	var arc = d3.svg.arc()
-					.innerRadius(innerRadius)
-					.outerRadius(outerRadius);
-
-	var color = d3.scale.category10();
-
-	var arcs = svg.selectAll("g")
-				  .data(pie(items))
-				  .enter()
-				  .append("g")
-				  .attr("transform","translate("+outerRadius+","+outerRadius+")");
-				  
- 	arcs.append(path)
-		.attr("fill",function(d,i){
-			return color(i);
-		})
-		.attr("d",function(d){
-			return arc(d);
-		});
-
-	arcs.append("text")
-		.attr("transform",function(d){
-			return "translate(" + arc.centroid(d) + ")";
-		})
-		.attr("text-anchor","middle")
-		.text(function(d){
-			console.log(d);
-			return d.data.name;
-		}); 
-}
-
 var drawbubble = function(width, height, items, path) {
 	width = 200
     height = 200
@@ -143,30 +102,29 @@ var drawbubble = function(width, height, items, path) {
     color = d3.scale.category10();
     
     items = {
-        "name": "flare",
+        "name": "工行",
         "children": [
         {
-            "name": "analytics",
+            "name": "工银瑞信",
             "children": [
             {
-                "name": "cluster",
+                "name": "中高级",
                 "children": [
-                {"name": "AgglomerativeCluster", "size": 3938},
-                {"name": "CommunityStructure", "size": 3812}
+                {"name": "中银A", "size": 3938},
+                {"name": "中银B", "size": 3812}
                 ]
             },
             {
-                "name": "graph",
+                "name": "东方证券",
                 "children": [
-                {"name": "BetweennessCentrality", "size": 3534},
-                {"name": "LinkDistance", "size": 5731},
-                {"name": "SpanningTree", "size": 3416}
+                {"name": "东方红A", "size": 3534},
+                {"name": "东方红B", "size": 5731}
                 ]
             },
             {
-                "name": "optimization",
+                "name": "华安基金",
                 "children": [
-                {"name": "AspectRatioBanker", "size": 7074}
+                {"name": "华安安益", "size": 7074}
                 ]
             }]
         }
